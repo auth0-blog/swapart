@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="//use.typekit.net/iws6ohy.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- font awesome from BootstrapCDN -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
+
+    <script src="auth0-variables.js"> </script>
+  </head>
+  <body class="home">
+    <div class="container">
+      <div class="login-page clearfix">
+        <div class="login-box auth0-box before">
+          <img class="logo" src="https://i.cloudup.com/StzWWrY34s.png" />
+          <h3>Swapart</h3>
+          <p>Login with your Phone Number </p>
+       
+          <a ng-click="login()" class="btn btn-primary btn-lg btn-login btn-block">SignIn</a>
+        </div>
+        <div class="logged-in-box auth0-box logged-in" style="display: none;">
+          <img class="avatar"/>
+          <h2>Welcome <span class="nickname"></span></h2>
+        </div>
+      </div>
+    </div>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdn.auth0.com/js/lock-passwordless-1.0.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.btn-login').click(function(e) {
+          e.preventDefault();
+
+          // Initialize Passwordless Lock instance
+          var lock = new Auth0LockPasswordless(
+            // All these properties are set in auth0-variables.js
+            AUTH0_CLIENT_ID,
+            AUTH0_DOMAIN
+          );
+
+          var appearanceOpts = {
+            autoclose: true
+          };
+          
+          // Open the lock in SMS mode with the ability to handle the authentication in page
+          lock.sms(appearanceOpts,function (err, profile, id_token, access_token, state, refresh_token) {
+            if (!err){
+              // Save the JWT token.
+              localStorage.setItem('userToken', id_token);
+              console.log('profile',profile);
+              $('.login-box').hide();
+              $('.logged-in-box').show();
+              $('.nickname').text(profile.name);
+              $('.avatar').attr('src', profile.picture);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
